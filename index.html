@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple NodeJS Chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="has-background-dark">
+    <section class="hero is-info is-small">
+        <div class="hero-body">
+            <p class="title">
+                Simple Chat
+            </p>
+            <p class="subtitle">
+                A simple chat using Node.JS, Express and Mongoose.
+            </p>
+        </div>
+    </section>
+    <div class="columns is-centered mt-1 mb-1 p-1">
+        <div class="column is-half is-offset-quarter">
+            <div class="card">
+                <div class="card-content">
+                    <div class="content">
+        <div id="messages" style="min-height: 300px; max-height: 300px; overflow-y: scroll;">
+        </div>
+                </div>
+                </div>
+ 
+                <footer class="card-footer p-4 is-flex-mobile is-flex-wrap-wrap">
+        <input class="input is-normal" type="text" id="name" placeholder="Your name">
+        <input class="input is-normal" type="text" id="message" placeholder="Your message">
+        <button class="button is-success is-fullwidth" id="send" style="width: 100%">Enviar</button>
+                </footer>
+
+        </div>    
+    </div>
+    </div>
+    <script src="socket.io\socket.io.js"></script>
+    <script>
+        let socket = io();
+        let data = {name:'', message:''};
+        let messages = $('#messages');
+        let colors = ['blue','orange','red','pink','violet'];
+        let randColor = () => Math.floor(Math.random()*5); 
+        let myColor = colors[randColor()];
+$("#send").click( () => checkMessage());
+$(document).on('keypress', (e) => {if(e.which==13){checkMessage()}});
+let checkMessage = () => {
+    if($("#name").val().trim()!=='' && $("#message").val().trim()!==''){
+    sendMessage( {name : $("#name").val(), msg : $("#message").val(), color : myColor});
+    $("#name").prop("disabled", true);
+    $("#message").val("");
+        }
+}
+
+function sendMessage(messages)
+{
+socket.emit('send message', messages);
+}
+socket.on('receive message', ({name, msg, color}) => {
+    let msgLine = document.createElement("li");
+    msgLine.style.listStyle="none";
+    msgLine.innerHTML=`<span style="color: ${color}; font-weight: bold;">${name}:</span> ${msg}`;
+    messages.append(msgLine);
+})
+    </script>
+</body>
+</html>
