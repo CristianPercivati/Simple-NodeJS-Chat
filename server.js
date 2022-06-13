@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
     socket.on('send message', ({name, msg, color}) => { 
     let messages = new messagesModel({name: name, msg: msg, color: color});
     messages.save();
-    socket.emit('receive message', {name, msg, color})
+    io.emit('receive message', {name, msg, color})
 });
 messagesModel.find({}).then( (data) => {
     for (let object of data){
