@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
 });
 messagesModel.find({}).then( (data) => {
     for (let object of data){
-    socket.to(socket).emit('receive message', object)
+    socket.emit('receive message', object)
     }
 });    
 });
